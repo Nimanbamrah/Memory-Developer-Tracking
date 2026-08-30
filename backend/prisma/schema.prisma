@@ -1,0 +1,29 @@
+datasource db{
+    provider = "postgresql"
+    url = env("DATABASE_URL")
+}
+
+generator client{
+    provider = "prisma-client-js"
+    previousFeatures = ["postgresqlExtensions"]
+}
+
+model Memory {
+    id  String @id @default(uuid())
+    title  String
+    problem String
+    solution String
+    tags     String[]
+    embedding Unsupported("vector(3072)")?
+    createdAt DateTime @default(now())
+    
+    @@map("Memory")
+}
+
+enum MemoryType{
+    BUG
+    ERROR
+    DECISION
+    CODE
+    ARTICLE
+}
