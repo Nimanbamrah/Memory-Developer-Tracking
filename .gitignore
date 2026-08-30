@@ -3,3 +3,4 @@ frontend/
 backend/node_modules/
 frontend2/node_modules/
 README.md
+backend/dist/
