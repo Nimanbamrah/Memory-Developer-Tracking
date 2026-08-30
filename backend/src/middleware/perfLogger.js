@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.perfLogger = void 0;
-const express_1 = require("express");
 function perfLogger(req, res, next) {
     // Initialize high-resolution tracker using process.hrtime.bigint()
     res.locals.perf = {

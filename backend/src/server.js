@@ -1,38 +1,16 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importStar(require("express"));
+const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const client_1 = require("@prisma/client");
 const ai_service_1 = require("./services/ai.service");
 const genai_1 = require("@google/genai");
 const perfLogger_1 = require("./middleware/perfLogger");
+const rateLimiter_1 = require("./middleware/rateLimiter");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
@@ -49,7 +27,7 @@ app.use((req, res, next) => {
     next();
 });
 // Reuse Phase 1 Ingestion for context generation
-app.post('/api/memories', async (req, res) => {
+app.post('/api/memories', rateLimiter_1.aiRateLimiter, async (req, res) => {
     const { title, problem, solution, tags } = req.body;
     if (!title || !problem || !solution)
         return res.status(400).json({ error: "Fields missing." });
@@ -77,7 +55,7 @@ app.post('/api/memories', async (req, res) => {
 /**
  * ⚡ NEW: Conversational RAG Endpoint with Integrated Sub-Millisecond Diagnostics
  */
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', rateLimiter_1.aiRateLimiter, async (req, res) => {
     const { message } = req.body;
     if (!message)
         return res.status(400).json({ error: "Message query is mandatory." });

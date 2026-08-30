@@ -18,10 +18,15 @@ async function generateEmbedding(text) {
             model: "gemini-embedding-001",
             contents: text,
         });
-        if (!response.embeddings || response.embeddings.length === 0 || !response.embeddings[0].values) {
-            throw new Error('Vector engine failed to allocate target geometric float arrays.');
+        // if (!response.embeddings || response.embeddings.length === 0 || !response.embeddings[0].values) {
+        //   throw new Error('Vector engine failed to allocate target geometric float arrays.');
+        // }
+        // return response.embeddings[0].values;
+        const embedding = response.embeddings?.[0]?.values;
+        if (!embedding) {
+            throw new Error("No embedding returned from Gemini");
         }
-        return response.embeddings[0].values;
+        return embedding;
     }
     catch (error) {
         console.error('Gemini Embedding Exception:', error.message || error);

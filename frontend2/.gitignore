@@ -1,3 +1,29 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+
 *.tsbuildinfo
+
+frontend
+
+
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+README.md
+frontend/
+
+*.log
