@@ -93,7 +93,7 @@ app.post('/api/chat', rateLimiter_1.aiRateLimiter, async (req, res) => {
       ${semanticContextPayload}
     `;
         const modelResponse = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.6-flash',
             contents: message,
             config: {
                 systemInstruction: operationalSystemInstruction,

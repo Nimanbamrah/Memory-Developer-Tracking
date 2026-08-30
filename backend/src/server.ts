@@ -103,7 +103,7 @@ app.post('/api/chat', aiRateLimiter, async (req: Request, res: Response) => {
     `;
 
     const modelResponse = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.6-flash',
       contents: message,
       config: {
         systemInstruction: operationalSystemInstruction,
@@ -124,7 +124,7 @@ app.post('/api/chat', aiRateLimiter, async (req: Request, res: Response) => {
 
   } catch (error: any) {
     console.error("RAG Processing Pipeline Error:", error);
-    return res.status(500).json({ error: "Cognitive generation sub-module failure." });
+    return res.status(500).json({ error: error?.message || "Cognitive generation sub-module failure." });
   }
 });
 
