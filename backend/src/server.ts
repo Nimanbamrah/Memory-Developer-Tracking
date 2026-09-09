@@ -57,20 +57,20 @@ app.post('/api/memories', aiRateLimiter, async (req: Request, res: Response) => 
 });
 
 /**
- * ⚡ NEW: Conversational RAG Endpoint with Integrated Sub-Millisecond Diagnostics
+ *  RAG Endpoint with Integrated Sub-Millisecond Diagnostics
  */
 app.post('/api/chat', aiRateLimiter, async (req: Request, res: Response) => {
   const { message } = req.body;
   if (!message) return res.status(400).json({ error: "Message query is mandatory." });
 
   try {
-    // 1. EMBEDDING PHASE: Convert query prompt into 768 float array
+    // EMBEDDING PHASE: Convert query prompt into 768 float array
     const embedStart = process.hrtime.bigint();
     const queryVector = await generateEmbedding(message);
     const vectorString = `[${queryVector.join(',')}]`;
     res.locals.perf.embeddingTime = Number(process.hrtime.bigint() - embedStart) / 1e6;
 
-    // 2. VECTOR DB RETRIEVAL PHASE: Cosine similarity vector search
+    // VECTOR DB RETRIEVAL PHASE: Cosine similarity vector search
     const dbStart = process.hrtime.bigint();
     const matchingContexts: any[] = await prisma.$queryRawUnsafe(`
       SELECT title, problem, solution, tags,
@@ -90,7 +90,7 @@ app.post('/api/chat', aiRateLimiter, async (req: Request, res: Response) => {
       ).join('\n---\n');
     }
 
-    // 4. GENERATION PHASE: Execute contextual instruction targeting gemini-2.5-flash
+    // GENERATION PHASE: Execute contextual instruction targeting gemini-2.5-flash
     const llmStart = process.hrtime.bigint();
     const operationalSystemInstruction = `
       You are the core intelligence engineer engine of MEM_OS, a developer's real-time second brain.
@@ -107,7 +107,7 @@ app.post('/api/chat', aiRateLimiter, async (req: Request, res: Response) => {
       contents: message,
       config: {
         systemInstruction: operationalSystemInstruction,
-        temperature: 0.2 // Low temperature restricts hallucinations and enforces context reliance
+        temperature: 0.2 // Low temperature restricts hallucinations and enforces context relince
       }
     });
     res.locals.perf.llmTime = Number(process.hrtime.bigint() - llmStart) / 1e6;
